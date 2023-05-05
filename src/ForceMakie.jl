@@ -6,11 +6,10 @@ using CairoMakie
 
 export plot_av_profile,
        plot_good_bad
-# add comment 
-
 
 function plot_good_bad(fig::Figure,
-                    fp::ForceProfiles;
+                    force::Matrix;
+                    zero_sample::Int = 0,
                     ylims::UnitRange{Int}=-2000:2000,
                     good_trials::AbstractVector{Bool}=[true],
                     colors_good = RGBAf(0.2, 0.6, 0.2, 0.5),
@@ -18,14 +17,13 @@ function plot_good_bad(fig::Figure,
                     marker::AbstractVector{Int} = [],
                     info_text::AbstractString = "" )
 
-    force = fp.force
     nrow = size(force, 1)
     if length(good_trials) != nrow
         # define sample range based on zero_sample
         good_trials = repeat([true], nrow)
     end;
 
-    xs = (1-fp.zero_sample):(size(force, 2)-fp.zero_sample)
+    xs = (1-zero_sample):(size(force, 2)-zero_sample)
     ax = Axis(fig[1, 1])
     if length(marker) > 0
         vlines!(ax, marker, linewidth = 0.5, color=:gray)
