@@ -17,6 +17,26 @@ function plot_good_bad(fig::Figure,
                     marker::AbstractVector{Int} = [],
                     info_text::AbstractString = "" )
 
+    plot_good_bad(Axis(fig[1, 1]),
+                    force;
+                    zero_sample,
+                    ylims,
+                    good_trials,
+                    colors_good ,
+                    color_bad ,
+                    marker,
+                    info_text)
+
+end
+function plot_good_bad(ax::Axis,
+                force::Matrix;
+                zero_sample::Int = 0,
+                ylims::UnitRange{Int}=-2000:2000,
+                good_trials::AbstractVector{Bool}=[true],
+                colors_good = RGBAf(0.2, 0.6, 0.2, 0.5),
+                color_bad = RGBAf(0.9, 0.4, 0.4, 0.5),
+                marker::AbstractVector{Int} = [],
+                info_text::AbstractString = "" )
     nrow = size(force, 1)
     if length(good_trials) != nrow
         # define sample range based on zero_sample
@@ -24,7 +44,6 @@ function plot_good_bad(fig::Figure,
     end;
 
     xs = (1-zero_sample):(size(force, 2)-zero_sample)
-    ax = Axis(fig[1, 1])
     if length(marker) > 0
         vlines!(ax, marker, linewidth = 0.5, color=:gray)
     end
@@ -41,7 +60,7 @@ function plot_good_bad(fig::Figure,
         text = info_text,
         align = (:left, :top), offset = (4, -2),
         space = :relative, fontsize = 18)
-    return fig, ax
+    return nothing
 end;
 
 
