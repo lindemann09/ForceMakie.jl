@@ -12,14 +12,13 @@ function profile_lines!(ax::Axis,
     if colors isa Colorant
         colors = Iterators.cycle((colors, ))
     end
-    @show colors
     for (i, color) in zip(rows, colors)
 		lines!(xs, dat[i, :]; color, kwargs...)
 	end
 end
 
-function profile_lines!(ax::Axis, fp::ForceProfiles, rows::Integer; kwargs...)
-	profile_lines!(ax, fp, (rows,); kwargs...)
+function profile_lines!(ax::Axis, fp::ForceProfiles, row::Integer; kwargs...)
+	profile_lines!(ax, fp, [row]; kwargs...)
 end
 
 function marker!(ax::Axis, marker::AbstractVector{<:Integer};
@@ -29,5 +28,4 @@ function marker!(ax::Axis, marker::AbstractVector{<:Integer};
 	vlines!(ax, marker; linewidth = marker_linewidth, color = marker_color,
 		kwargs...)
 end
-marker!(ax::Axis, marker::Nothing; kwargs...) = nothing
 

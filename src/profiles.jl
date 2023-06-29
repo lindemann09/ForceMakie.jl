@@ -7,18 +7,57 @@ function plot_profiles!(ax::Axis, fp::ForceProfiles;
 	marker_color::Colorant = RGBAf(0.9, 0.4, 0.4, 0.8),
 	marker_linewidth::Integer = 2,
 	info_text::AbstractString = "",
+	resp_criterion::Union{Nothing,OnsetCriterion} = nothing,
+	mark_peak::Bool = true
 )
 	if isnothing(rows)
 		rows = 1:n_profiles(fp)
+	else
+		fp = subset(fp, rows)
+		rows = 1:n_profiles(fp)
 	end
+
+	if !isnothing(resp_criterion)
+		resp_mark = _response_marker(fp, resp_criterion; mark_peak)
+		if isnothing(marker)
+			marker = resp_mark
+		else
+			append!(marker, resp_mark)
+		end
+	end
+
 	profile_lines!(ax, fp, rows; colors, linewidth)
-	marker!(ax, marker; linewidth = marker_linewidth, color = marker_color)
+	if !isnothing(marker)
+		marker!(ax, marker; linewidth = marker_linewidth, color = marker_color)
+	end
 	ylims!(ax, ylims.start, ylims.stop)
 	text!(ax, 0, 1,
 		text = info_text,
 		align = (:left, :top), offset = (4, -2),
 		space = :relative, fontsize = 18)
 	return nothing
+end
+
+function _response_marker(fp::ForceProfiles, oc::OnsetCriterion;
+	mark_peak::Bool = true)
+	rtn = Int[]
+	responses = response_detection(fp, oc)
+	for rb in responses
+        if !ismissing(rb.onset)
+			push!(rtn, rb.onset - rb.zero_sample)
+		end
+		if !ismissing(rb.offset)
+			push!(rtn, rb.offset - rb.zero_sample)
+		end
+	end
+	if mark_peak
+		for (r, p) in zip(responses, peak_force(fp, responses))
+			if p.sample_to_peak >= 0
+				push!(rtn, p.sample_to_peak + r.onset-r.zero_sample )
+			end
+		end
+	end
+	return rtn
 end
 
 function plot_profiles!(fig::Figure, fp::ForceProfiles; kwargs...)
