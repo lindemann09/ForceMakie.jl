@@ -1,7 +1,7 @@
 name = "ForceMakie"
 uuid = "f8689372-723a-4938-8343-2c065a2e8e4c"
 authors = ["Oliver Lindemann"]
-version = "0.1.3"
+version = "0.1.5"
 
 [deps]
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
