@@ -1,8 +1,8 @@
 module ForceMakie
 
 using ForceAnalysis
-using ColorSchemes
-using Colors
+import ForceAnalysis: column_mean, column_median, column_std
+using PlotUtils
 using CairoMakie
 
 export plot_av_profile!,
