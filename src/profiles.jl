@@ -121,7 +121,6 @@ function plot_av_profile!(ax::Axis, fp::ForceProfiles;
 		vspan!(start, stop, color = (:green, 0.3))
 	end
 
-
 	agg_forces = aggregate(fp; condition, agg_fnc = agg_fnc)
 	cond = agg_forces.design[:, condition]
 	if stdev
@@ -131,7 +130,7 @@ function plot_av_profile!(ax::Axis, fp::ForceProfiles;
 	end
 
 	if isnothing(colors)
-		cols = cgrad(:roma, length(cond), categorical = true)
+		cols = cgrad(:jet1, length(cond), categorical = true)
 	else
 		cols = colors
 	end
