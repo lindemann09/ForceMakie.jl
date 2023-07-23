@@ -145,3 +145,6 @@ end
 function plot_av_profile!(fig::Figure, fp::ForceProfiles; kwargs...)
 	return plot_av_profile!(Axis(fig[1, 1]), fp; kwargs...)
 end
+
+function Axis(fig::FigureLike)
+end

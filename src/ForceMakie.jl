@@ -1,10 +1,10 @@
 module ForceMakie
 
-using ForceAnalysis
-
+using Makie
 using ColorTypes: Colorant
 using PlotUtils: ColorGradient
-using CairoMakie
+
+using ForceAnalysis
 
 export plot_av_profile!,
 	plot_good_bad!,
