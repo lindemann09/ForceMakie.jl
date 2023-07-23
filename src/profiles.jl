@@ -58,14 +58,12 @@ function plot_profiles!(ax::Axis, fp::ForceProfiles;
 		text = info_text,
 		align = (:left, :top), offset = (4, -2),
 		space = :relative, fontsize = 18)
-	return nothing
+	return ax
 end
 
 
 function plot_profiles!(fig::Figure, fp::ForceProfiles; kwargs...)
-	ax = Axis(fig[1, 1])
-	plot_profiles!(ax, fp; kwargs...)
-	return ax
+	return plot_profiles!(Axis(fig[1, 1]), fp; kwargs...)
 end
 
 
@@ -88,13 +86,11 @@ function plot_good_bad!(ax::Axis, fp::ForceProfiles;
 	end
 	plot_profiles!(ax, fp; rows, ylims, colors, marker, linewidth, info_text,
 				kwargs...)
-	return nothing
+	return ax
 end
 
 function plot_good_bad!(fig::Figure, fp::ForceProfiles; kwargs...)
-	ax = Axis(fig[1, 1])
-	plot_good_bad!(ax, fp; kwargs...)
-	return ax
+	return plot_good_bad!(Axis(fig[1, 1]), fp; kwargs...)
 end
 
 
@@ -102,8 +98,8 @@ function plot_av_profile!(ax::Axis, fp::ForceProfiles;
 	condition::Symbol = :all,
 	marker = Int64[],
 	stdev::Bool = true,
-	colors::Union{ColorGradient, Vector{Colorant}, Nothing} = nothing,
-	agg_fnc::Function = column_mean,
+	colors::Union{<:ColorGradient, Vector{<:Colorant}, Nothing} = nothing,
+	agg_fnc::Function = mean,
 	linewidth::Real = 5,
 	mark_ranges::Union{Nothing, Vector{UnitRange}} = nothing
 )
@@ -124,13 +120,13 @@ function plot_av_profile!(ax::Axis, fp::ForceProfiles;
 	agg_forces = aggregate(fp; condition, agg_fnc = agg_fnc)
 	cond = agg_forces.design[:, condition]
 	if stdev
-		sd_forces = aggregate(fp; condition, agg_fnc = column_std)
+		sd_forces = aggregate(fp; condition, agg_fnc = std)
 	else
 		sd_forces = nothing
 	end
 
 	if isnothing(colors)
-		cols = cgrad(:jet1, length(cond), categorical = true)
+		cols = cgrad(:roma, length(cond), categorical = true, rev=true)
 	else
 		cols = colors
 	end
@@ -143,12 +139,9 @@ function plot_av_profile!(ax::Axis, fp::ForceProfiles;
 			band!(xs, val + err, val - err, color = (cols[i], 0.2))
 		end
 	end
-
-	return nothing
+	return ax
 end
 
 function plot_av_profile!(fig::Figure, fp::ForceProfiles; kwargs...)
-	ax = Axis(fig[1, 1])
-	plot_av_profile!(ax, fp; kwargs...)
-	return ax
+	return plot_av_profile!(Axis(fig[1, 1]), fp; kwargs...)
 end
