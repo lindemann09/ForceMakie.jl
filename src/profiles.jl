@@ -1,27 +1,5 @@
 
-function _response_marker(fp::ForceProfiles, oc::OnsetCriterion;
-	mark_peak::Bool = true)
-	rtn = Int[]
-	responses = response_detection(fp, oc)
-	for rb in responses
-		if !ismissing(rb.onset)
-			push!(rtn, rb.onset - rb.zero_sample)
-		end
-		if !ismissing(rb.offset)
-			push!(rtn, rb.offset - rb.zero_sample)
-		end
-	end
-	if mark_peak
-		for (r, p) in zip(responses, peak_force(fp, responses))
-			if p.sample_to_peak >= 0
-				push!(rtn, p.sample_to_peak + r.onset - r.zero_sample)
-			end
-		end
-	end
-	return rtn
-end
-
-function plot_profiles!(ax::Axis, fp::ForceProfiles;
+function Makie.plot!(ax::Axis, fp::ForceProfiles;
 	rows::row_ids = nothing,
 	ylims::UnitRange{Int} = -2000:2000,
 	colors::VecOrColorant = RGBAf(0.2, 0.6, 0.2, 0.5),
@@ -32,12 +10,10 @@ function plot_profiles!(ax::Axis, fp::ForceProfiles;
 	info_text::AbstractString = "",
 	resp_criterion::Union{Nothing, OnsetCriterion} = nothing,
 	mark_peak::Bool = true,
+	kwargs...,
 )
-	if isnothing(rows)
-		rows = 1:n_profiles(fp)
-	else
+	if !isnothing(rows)
 		fp = subset(fp, rows)
-		rows = 1:n_profiles(fp)
 	end
 
 	if !isnothing(resp_criterion)
@@ -49,23 +25,18 @@ function plot_profiles!(ax::Axis, fp::ForceProfiles;
 		end
 	end
 
-	profile_lines!(ax, fp, rows; colors, linewidth)
-	if !isnothing(marker)
-		marker!(ax, marker; linewidth = marker_linewidth, color = marker_color)
-	end
-	ylims!(ax, ylims.start, ylims.stop)
-	text!(ax, 0, 1,
-		text = info_text,
-		align = (:left, :top), offset = (4, -2),
-		space = :relative, fontsize = 18)
-	return ax
+	return plot_profiles!(ax, force(fp); zero_sample = fp.zero_sample,
+		ylims, colors, linewidth, marker, marker_color, marker_linewidth,
+		info_text, kwargs...)
 end
 
-
-function plot_profiles!(fig::Figure, fp::ForceProfiles; kwargs...)
+function Makie.plot!(fig::Figure, fp::ForceProfiles; kwargs...)
 	return plot_profiles!(Axis(fig[1, 1]), fp; kwargs...)
 end
 
+function Makie.plot!(fig::Figure, profile_mtx::Matrix; kwargs...)
+	return plot_profiles!(Axis(fig[1, 1]), fp; kwargs...)
+end
 
 function plot_good_bad!(ax::Axis, fp::ForceProfiles;
 	rows::row_ids = nothing,
@@ -84,13 +55,13 @@ function plot_good_bad!(ax::Axis, fp::ForceProfiles;
 	else
 		colors = [x ? colors_good : color_bad for x in good_trials]
 	end
-	plot_profiles!(ax, fp; rows, ylims, colors, marker, linewidth, info_text,
+	plot!(ax, fp; rows, ylims, colors, marker, linewidth, info_text,
 				kwargs...)
 	return ax
 end
 
 function plot_good_bad!(fig::Figure, fp::ForceProfiles; kwargs...)
-	return plot_good_bad!(Axis(fig[1, 1]), fp; kwargs...)
+	return plot!(Axis(fig[1, 1]), fp; kwargs...)
 end
 
 

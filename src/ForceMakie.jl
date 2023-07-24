@@ -3,14 +3,16 @@ module ForceMakie
 using Makie
 using ColorTypes: Colorant
 using PlotUtils: ColorGradient
+import Makie:plot!
 
 using ForceAnalysis
 
-export plot_av_profile!,
-	plot_good_bad!,
-	plot_profiles!
+export 	plot!,
+	plot_profiles!,
+	plot_av_profile!,
+	plot_good_bad!
 
-include("common.jl")
+include("plot_data.jl")
 include("profiles.jl")
 
 end # module
