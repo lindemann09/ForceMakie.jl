@@ -77,7 +77,7 @@ function plot_av_profile!(ax::Axis, fp::ForceProfiles;
 	# conditions is a variable with the conditions
 	# has to have the same number of elemens as rows in froce
 	dat = force(fp)
-	xs = (1-fp.zero_sample):(n_samples(fp)-fp.zero_sample)
+	xs = (1-fp.zero_sample):(fp.n_samples-fp.zero_sample)
 	if length(marker) > 0
 		vlines!(ax, marker, linewidth=1, color = :gray)
 	end
