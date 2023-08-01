@@ -24,7 +24,7 @@ function _response_marker(fp::ForceProfiles, oc::OnsetCriterion;
 	return rtn
 end
 
-function plot_profiles!(ax::Axis,
+function plot_force_matrix!(ax::Axis,
 	force_mtx::Matrix{<:AbstractFloat};
 	zero_sample::Integer = 0,
 	ylims::UnitRange{Int} = -2000:2000,
@@ -58,9 +58,11 @@ function plot_profiles!(ax::Axis,
 	return ax
 end
 
-function plot_profiles!(fig::Figure, force_mtx::Matrix{<:AbstractFloat}; kwargs...)
-	return plot_profiles!(Axis(fig[1, 1]), fp; kwargs...)
+function highlight_ranges!(ax::Axis, ranges::Base.AbstractVecOrTuple{UnitRange}, color::Any)
+	start = [x.start for x in ranges]
+	stop = [x.stop for x in ranges]
+	vspan!(ax, start, stop; color)
 end
 
-
+highlight_ranges!(ax::Axis, ranges::UnitRange, color::Any) = highlight_ranges!(ax, (ranges, ), color)
 

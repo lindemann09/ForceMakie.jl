@@ -8,9 +8,9 @@ import Makie:plot!
 using ForceAnalysis
 
 export 	plot!,
-	plot_profiles!,
 	plot_av_profile!,
-	plot_good_bad!
+	plot_good_bad!,
+	highlight_ranges!
 
 include("plot_data.jl")
 include("profiles.jl")

@@ -25,17 +25,17 @@ function Makie.plot!(ax::Axis, fp::ForceProfiles;
 		end
 	end
 
-	return plot_profiles!(ax, force(fp); zero_sample = fp.zero_sample,
+	return plot_force_matrix!(ax, force(fp); zero_sample = fp.zero_sample,
 		ylims, colors, linewidth, marker, marker_color, marker_linewidth,
 		info_text, kwargs...)
 end
 
 function Makie.plot!(fig::Figure, fp::ForceProfiles; kwargs...)
-	return plot_profiles!(Axis(fig[1, 1]), fp; kwargs...)
+	return plot!(Axis(fig[1, 1]), fp; kwargs...)
 end
 
 function Makie.plot!(fig::Figure, profile_mtx::Matrix; kwargs...)
-	return plot_profiles!(Axis(fig[1, 1]), fp; kwargs...)
+	return plot_force_matrix!(Axis(fig[1, 1]), profile_mtx; kwargs...)
 end
 
 function plot_good_bad!(ax::Axis, fp::ForceProfiles;
@@ -72,20 +72,18 @@ function plot_av_profile!(ax::Axis, fp::ForceProfiles;
 	colors::Union{<:ColorGradient, Vector{<:Colorant}, Nothing} = nothing,
 	agg_fnc::Function = mean,
 	linewidth::Real = 5,
-	mark_ranges::Union{Nothing, Vector{UnitRange}} = nothing
+	highlight_ranges::Union{Nothing, Vector{UnitRange}} = nothing
 )
 	# conditions is a variable with the conditions
 	# has to have the same number of elemens as rows in froce
-	dat = force(fp)
+
 	xs = (1-fp.zero_sample):(fp.n_samples-fp.zero_sample)
 	if length(marker) > 0
 		vlines!(ax, marker, linewidth=1, color = :gray)
 	end
 
-	if !isnothing(mark_ranges)
-		start = [x.start for x in mark_ranges]
-		stop = [x.stop for x in mark_ranges]
-		vspan!(start, stop, color = (:green, 0.3))
+	if !isnothing(highlight_ranges)
+		highlight_ranges!(ax, highlight_ranges, (:green, 0.3))
 	end
 
 	agg_forces = aggregate(fp; condition, agg_fnc = agg_fnc)
