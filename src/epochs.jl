@@ -1,5 +1,5 @@
 
-function Makie.plot!(ax::Axis, fp::ForceProfiles;
+function Makie.plot!(ax::Axis, fe::ForceEpochs;
 	rows::row_ids = nothing,
 	ylims::UnitRange{Int} = -2000:2000,
 	colors::VecOrColorant = RGBAf(0.2, 0.6, 0.2, 0.5),
@@ -13,11 +13,11 @@ function Makie.plot!(ax::Axis, fp::ForceProfiles;
 	kwargs...,
 )
 	if !isnothing(rows)
-		fp = subset(fp, rows)
+		fe = subset(fe, rows)
 	end
 
 	if !isnothing(resp_criterion)
-		resp_mark = _response_marker(fp, resp_criterion; mark_peak)
+		resp_mark = _response_marker(fe, resp_criterion; mark_peak)
 		if isnothing(marker)
 			marker = resp_mark
 		else
@@ -25,20 +25,20 @@ function Makie.plot!(ax::Axis, fp::ForceProfiles;
 		end
 	end
 
-	return plot_force_matrix!(ax, force(fp); zero_sample = fp.zero_sample,
+	return plot_force_matrix!(ax, force(fe); zero_sample = fe.zero_sample,
 		ylims, colors, linewidth, marker, marker_color, marker_linewidth,
 		info_text, kwargs...)
 end
 
-function Makie.plot!(fig::Figure, fp::ForceProfiles; kwargs...)
-	return plot!(Axis(fig[1, 1]), fp; kwargs...)
+function Makie.plot!(fig::Figure, fe::ForceEpochs; kwargs...)
+	return plot!(Axis(fig[1, 1]), fe; kwargs...)
 end
 
-function Makie.plot!(fig::Figure, profile_mtx::Matrix; kwargs...)
-	return plot_force_matrix!(Axis(fig[1, 1]), profile_mtx; kwargs...)
+function Makie.plot!(fig::Figure, epoch_mtx::Matrix; kwargs...)
+	return plot_force_matrix!(Axis(fig[1, 1]), epoch_mtx; kwargs...)
 end
 
-function plot_good_bad!(ax::Axis, fp::ForceProfiles;
+function plot_good_bad!(ax::Axis, fe::ForceEpochs;
 	rows::row_ids = nothing,
 	ylims::UnitRange{Int} = -2000:2000,
 	good_trials::Union{Nothing, AbstractVector{Bool}} = nothing,
@@ -55,17 +55,17 @@ function plot_good_bad!(ax::Axis, fp::ForceProfiles;
 	else
 		colors = [x ? colors_good : color_bad for x in good_trials]
 	end
-	plot!(ax, fp; rows, ylims, colors, marker, linewidth, info_text,
+	plot!(ax, fe; rows, ylims, colors, marker, linewidth, info_text,
 				kwargs...)
 	return ax
 end
 
-function plot_good_bad!(fig::Figure, fp::ForceProfiles; kwargs...)
-	return plot!(Axis(fig[1, 1]), fp; kwargs...)
+function plot_good_bad!(fig::Figure, fe::ForceEpochs; kwargs...)
+	return plot!(Axis(fig[1, 1]), fe; kwargs...)
 end
 
 
-function plot_av_profile!(ax::Axis, fp::ForceProfiles;
+function plot_av_epoch!(ax::Axis, fe::ForceEpochs;
 	condition::Symbol = :all,
 	marker = Int64[],
 	stdev::Bool = true,
@@ -77,7 +77,7 @@ function plot_av_profile!(ax::Axis, fp::ForceProfiles;
 	# conditions is a variable with the conditions
 	# has to have the same number of elemens as rows in froce
 
-	xs = (1-fp.zero_sample):(fp.n_samples-fp.zero_sample)
+	xs = (1-fe.zero_sample):(fe.n_samples-fe.zero_sample)
 	if length(marker) > 0
 		vlines!(ax, marker, linewidth=1, color = :gray)
 	end
@@ -86,10 +86,10 @@ function plot_av_profile!(ax::Axis, fp::ForceProfiles;
 		highlight_ranges!(ax, highlight_ranges, (:green, 0.3))
 	end
 
-	agg_forces = aggregate(fp; condition, agg_fnc = agg_fnc)
+	agg_forces = aggregate(fe; condition, agg_fnc = agg_fnc)
 	cond = agg_forces.design[:, condition]
 	if stdev
-		sd_forces = aggregate(fp; condition, agg_fnc = std)
+		sd_forces = aggregate(fe; condition, agg_fnc = std)
 	else
 		sd_forces = nothing
 	end
@@ -111,6 +111,6 @@ function plot_av_profile!(ax::Axis, fp::ForceProfiles;
 	return ax
 end
 
-function plot_av_profile!(fig::Figure, fp::ForceProfiles; kwargs...)
-	return plot_av_profile!(Axis(fig[1, 1]), fp; kwargs...)
+function plot_av_epoch!(fig::Figure, fe::ForceEpochs; kwargs...)
+	return plot_av_epoch!(Axis(fig[1, 1]), fe; kwargs...)
 end
