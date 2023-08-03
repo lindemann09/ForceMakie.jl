@@ -2,10 +2,10 @@ const VecOrColorant = Union{Colorant, Base.AbstractVecOrTuple{Colorant}}
 const row_ids = Union{Nothing, Integer, Base.AbstractVecOrTuple{Integer}}
 
 
-function _response_marker(fp::ForceProfiles, oc::OnsetCriterion;
+function _response_marker(fe::ForceEpochs, oc::OnsetCriterion;
 	mark_peak::Bool = true)
 	rtn = Int[]
-	responses = response_detection(fp, oc)
+	responses = response_detection(fe, oc)
 	for rb in responses
 		if !ismissing(rb.onset)
 			push!(rtn, rb.onset - rb.zero_sample)
@@ -15,7 +15,7 @@ function _response_marker(fp::ForceProfiles, oc::OnsetCriterion;
 		end
 	end
 	if mark_peak
-		for (r, p) in zip(responses, peak_force(fp, responses))
+		for (r, p) in zip(responses, peak_force(fe, responses))
 			if p.sample_to_peak >= 0
 				push!(rtn, p.sample_to_peak + r.onset - r.zero_sample)
 			end
