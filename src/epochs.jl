@@ -67,23 +67,25 @@ end
 
 function plot_av_epoch!(ax::Axis, fe::ForceEpochs;
 	condition::Symbol = :all,
-	marker = Int64[],
 	stdev::Bool = true,
 	colors::Union{<:ColorGradient, Vector{<:Colorant}, Nothing} = nothing,
 	agg_fnc::Function = mean,
 	linewidth::Real = 5,
-	highlight_ranges::Union{Nothing, Vector{UnitRange}} = nothing
+	marker = Int64[],
+	marker_color::Colorant = RGBAf(0.9, 0.4, 0.4, 0.8),
+	highlight_ranges::Union{Nothing, Vector{UnitRange}} = nothing,
+	highlight_color::Colorant = RGBAf(0.1, 0.9, 0.1, 0.3)
 )
 	# conditions is a variable with the conditions
 	# has to have the same number of elemens as rows in froce
 
 	xs = (1-fe.zero_sample):(fe.n_samples-fe.zero_sample)
 	if length(marker) > 0
-		vlines!(ax, marker, linewidth=1, color = :gray)
+		vlines!(ax, marker, linewidth=1, color = marker_color)
 	end
 
 	if !isnothing(highlight_ranges)
-		highlight_ranges!(ax, highlight_ranges, (:green, 0.3))
+		highlight_ranges!(ax, highlight_ranges, highlight_color)
 	end
 
 	agg_forces = aggregate(fe; condition, agg_fnc = agg_fnc)

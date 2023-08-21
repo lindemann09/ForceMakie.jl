@@ -1,9 +1,8 @@
 module ForceMakie
 
 using Makie
-using ColorTypes: Colorant
+using Colors
 using PlotUtils: ColorGradient
-import Makie:plot!
 
 using ForceAnalysis
 
