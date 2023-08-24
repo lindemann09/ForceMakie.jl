@@ -72,7 +72,7 @@ function plot_av_epoch!(ax::Axis, fe::ForceEpochs;
 	agg_fnc::Function = mean,
 	linewidth::Real = 5,
 	marker = Int64[],
-	marker_color::Colorant = RGBAf(0.9, 0.4, 0.4, 0.8),
+	marker_color::Colorant = RGBAf(0.2, 0.2, 0.2, 0.9),
 	highlight_ranges::Union{Nothing, Vector{UnitRange}} = nothing,
 	highlight_color::Colorant = RGBAf(0.1, 0.9, 0.1, 0.3)
 )
